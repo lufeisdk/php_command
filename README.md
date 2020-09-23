@@ -3,7 +3,9 @@
 在项目目录下，可通过命令执行PHP脚本，解析命令行所输入的参数
 
 举个栗子：
+
 命令行执行：php index.php index index name=Lufei age:20 city.Hangzhou 1600790399
+
 参数解析结果：
 <pre>Array
 (
