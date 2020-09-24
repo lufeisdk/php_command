@@ -24,7 +24,7 @@ class Log
             $driver = ucfirst($driver);
             $class = 'lib\driver\log\\' . $driver;
             if (!class_exists($class)) {
-                throw new Exception("找不到相应的日志驱动类：" . $driver);
+                throw new Exception("找不到相应的日志驱动类：" . $class);
             }
             $this->handler = new $class($options);
         } catch (Exception $e) {
