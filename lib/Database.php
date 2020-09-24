@@ -8,14 +8,34 @@ class Database
 
     static private $instance;
 
+    static private $_config = [];
+
+    /**
+     * 根据驱动获取数据库连接句柄
+     * @param string $driver
+     * @return mixed
+     */
     static public function getInstance($driver = 'mysql')
     {
-        if (false == isset(static::$instance[$driver])) {
-            $config = require_once ROOT_PATH . '/config/database.php';
-            $options = $config[$driver];
+        if (empty(static::$instance[$driver])) {
+            $options = static::getConfig($driver);
             static::$instance[$driver] = new self($driver, $options);
         }
         return static::$instance[$driver];
+    }
+
+    /**
+     * 根据配置重新建立数据库连接句柄
+     * 用户切换数据库使用
+     * @param array $configs
+     * @param string $driver
+     * @return Database
+     */
+    public function init($configs = [], $driver = 'mysql')
+    {
+        $options = static::getConfig($driver);
+        $options = array_merge($options, $configs);
+        return new self($driver, $options);
     }
 
     private function __construct($driver, array $options = [])
@@ -141,6 +161,20 @@ class Database
     public function get_sql()
     {
         return $this->handler->get_sql();
+    }
+
+    /**
+     * 根据驱动类型获取配置信息
+     * @param string $driver
+     * @return mixed
+     */
+    static private function getConfig($driver = 'mysql')
+    {
+        if (empty(static::$_config[$driver])) {
+            $config = require_once ROOT_PATH . '/config/database.php';
+            static::$_config[$driver] = $config[$driver];
+        }
+        return static::$_config[$driver];
     }
 
     public function __call($method, $args)
