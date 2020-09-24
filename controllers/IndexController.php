@@ -3,6 +3,7 @@
 namespace app;
 
 use lib\Cache;
+use lib\Database;
 use lib\Log;
 use lib\Controller;
 
@@ -20,6 +21,61 @@ class IndexController extends Controller
         echo "Hello World!" . PHP_EOL;
         echo "I am $name!" . PHP_EOL;
         echo "I am $age and is from $city!" . PHP_EOL;
+    }
+
+    public function db($param = [])
+    {
+        $model = Database::getInstance('sqlsrv');
+        $sql = "select FLD_USERID,FLD_ACCOUNT,FLD_CHARACTER,FLD_MAKEDATE,FLD_SDKID,FLD_SERVERID from TBL_CHARACTER WHERE FLD_ID < ?";
+        //$bool = $model->check($sql, [10]);
+        //$bool = $model->fetch_one($sql, [10]);
+        //$bool = $model->fetch_column($sql, [10]);
+        //$bool = $model->fetch_column($sql, [10], 'FLD_CHARACTER');
+        //$bool = $model->fetch_one_cell($sql, [10]);
+        //$bool = $model->fetch_rows($sql, [10]);
+        $bool = $model->fetch_list($sql, [10]);
+        var_dump($bool);
+        echo $model->get_sql();
+
+//        $model = Database::getInstance();
+//        $sql = "select * from `user` where id > 3 limit 10";
+//        $bool = $model->check($sql);
+//        var_dump($bool);
+//        $sql = $model->get_sql();
+//        echo $sql;
+//        $sql = "select * from `user` where id > ? limit 10";
+//        $bool = $model->check($sql, [3]);
+//        var_dump($bool);
+//        echo '<br>----<br>';
+//        $sql = $model->get_sql();
+//        echo $sql;
+//        $bool = $model->fetch_one($sql, [3]);
+//        var_dump($bool);
+//        echo '<br>----<br>';
+//        $bool = $model->fetch_column($sql, [3]);
+//        var_dump($bool);
+//        echo '<br>----<br>';
+//        $bool = $model->fetch_one_cell($sql, [8]);
+//        pp($bool);
+//        var_dump($bool);
+//        echo '<br>----<br>';
+//        $bool = $model->fetch_rows($sql, [3]);
+//        pp($bool);
+//        echo '<br>----<br>';
+//
+//        $bool = $model->fetch_list($sql, [3]);
+//        pp($bool);
+//        echo '<br>----<br>';
+//
+//        $sql = "insert into `user`(`name`, pwd, gender)values(?,?,?)";
+//        $bool = $model->add($sql, ['aaa924', '123222', 1]);
+//        pp($bool);
+//        echo '<br>----<br>';
+//
+//        $sql = "update `user` set pwd=md5('123456') WHERE id=?";
+//        $bool = $model->save($sql, [9]);
+//        var_dump($bool);
+//        echo '<br>----<br>';
     }
 
     public function log($param = [])

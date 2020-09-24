@@ -2,9 +2,8 @@
 
 namespace lib\driver\db;
 
-use lib\Exception;
 
-class Mysql extends Driver
+class Sqlsrv extends Driver
 {
     protected $handler = null; # 驱动句柄
 
@@ -12,24 +11,28 @@ class Mysql extends Driver
 
     protected $_param = [];  # SQL语句预编译参数
 
-    static private $_CONFIG = [ # 默认配置
+    private static $_CONFIG = [
         'host' => '127.0.0.1',
-        'user' => 'root',
-        'passwd' => 'root',
+        'user' => 'sa',
+        'passwd' => '',
         'dbname' => '',
-        'port' => 3306,
-        'charset' => 'utf8',
+        'charset' => 'utf8'
     ];
 
     public function __construct(Array $config = [])
     {
         self::$_OPTIONS = array_merge(self::$_CONFIG, $config);
 
-        $pdostr = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';port=' . $this->port;
+        $pdostr = 'sqlsrv:Server=' . $this->host . ';Database=' . $this->dbname;
+        if (isset($this->port)) {
+            $pdostr .= ';port=' . $this->port;
+        }
 
         try {
             $this->handler = new \PDO($pdostr, $this->user, $this->passwd);
+            # 设置编码
             $this->handler->exec("SET names " . $this->charset);
+            # 设置默认的提取模式
             $this->handler->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             throw new Exception('MySQL PDO数据库连接失败~');
@@ -199,7 +202,7 @@ class Mysql extends Driver
         }
 
         $this->_sql = $sql;
-        
+
         $this->_param = $params;
 
         $stmt = $this->handler->prepare($sql);
@@ -207,13 +210,5 @@ class Mysql extends Driver
         $stmt->execute($params);
 
         return $rowCount ? $stmt->rowCount() : $stmt->$func();
-    }
-
-    /**
-     * 关闭数据库连接
-     */
-    public function __destruct()
-    {
-        $this->handler = null;
     }
 }
