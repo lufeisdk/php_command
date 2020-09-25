@@ -25,19 +25,37 @@ class IndexController extends Controller
 
     public function db($param = [])
     {
-        $model = Database::getInstance('sqlsrv');
-        $sql = "select FLD_USERID,FLD_ACCOUNT,FLD_CHARACTER,FLD_MAKEDATE,FLD_SDKID,FLD_SERVERID from TBL_CHARACTER WHERE FLD_ID < ?";
-        //$bool = $model->check($sql, [10]);
-        //$bool = $model->fetch_one($sql, [10]);
-        //$bool = $model->fetch_column($sql, [10]);
-        //$bool = $model->fetch_column($sql, [10], 'FLD_CHARACTER');
-        //$bool = $model->fetch_one_cell($sql, [10]);
-        //$bool = $model->fetch_rows($sql, [10]);
-        $bool = $model->fetch_list($sql, [10]);
+//        $model = Database::getInstance('sqlsrv');
+//        $sql = "select FLD_USERID,FLD_ACCOUNT,FLD_CHARACTER,FLD_MAKEDATE,FLD_SDKID,FLD_SERVERID from TBL_CHARACTER WHERE FLD_ID < ?";
+//        //$bool = $model->check($sql, [10]);
+//        //$bool = $model->fetch_one($sql, [10]);
+//        //$bool = $model->fetch_column($sql, [10]);
+//        //$bool = $model->fetch_column($sql, [10], 'FLD_CHARACTER');
+//        //$bool = $model->fetch_one_cell($sql, [10]);
+//        //$bool = $model->fetch_rows($sql, [10]);
+//        $bool = $model->fetch_list($sql, [10]);
+//        var_dump($bool);
+//        echo $model->get_sql();
+
+        $config = [
+            'dbname' => 'fastadmin',
+        ];
+        $model = Database::getInstance()->init($config, 'default');
+        $sql = "show tables like 'fa_admin%'";
+        $bool = $model->fetch_rows($sql);
         var_dump($bool);
-        echo $model->get_sql();
+        $model = Database::getInstance();
+//        $sql = "select * from ios_mafa_order WHERE id < 100 limit 10";
+//        $bool = $model->fetch_rows($sql);
+//        var_dump($bool);
+        $sql = "show tables like 'phalapi%'";
+        $bool = $model->fetch_rows($sql);
+        var_dump($bool);
+        //echo $model->get_sql();
+        die;
 
 //        $model = Database::getInstance();
+////        $sql = "select * from `user` where name=? limit 10";
 //        $sql = "select * from `user` where id > 3 limit 10";
 //        $bool = $model->check($sql);
 //        var_dump($bool);
@@ -49,7 +67,7 @@ class IndexController extends Controller
 //        echo '<br>----<br>';
 //        $sql = $model->get_sql();
 //        echo $sql;
-//        $bool = $model->fetch_one($sql, [3]);
+//        $bool = $model->fetch_one($sql, ["世界真'奇妙"]);
 //        var_dump($bool);
 //        echo '<br>----<br>';
 //        $bool = $model->fetch_column($sql, [3]);
