@@ -3,6 +3,7 @@
 namespace lib\driver\db;
 
 use lib\Exception;
+use lib\Log;
 
 class Mysql extends Driver
 {
@@ -194,19 +195,29 @@ class Mysql extends Driver
      */
     private function getPreResult($func = 'fetch', $sql, $params, $rowCount = false)
     {
-        if (empty($sql)) {
-            return;
+        try {
+            $this->_sql = $sql;
+
+            $this->_param = $params;
+
+            $stmt = $this->handler->prepare($sql);
+
+            if ($params) {
+                foreach ($params as $k => $param) {
+                    $stmt->bindValue($k + 1, $param);
+                }
+            }
+
+            $stmt->execute();
+
+            return $rowCount ? $stmt->rowCount() : $stmt->$func();
+        } catch (Exception $e) {
+            $log = Log::getInstance();
+            $content = $e->errorMessage();
+            $content .= $sql . ' | ' . json_encode($params);
+            $log->setLogFile('sql.log')->write($content);
+            exit();
         }
-
-        $this->_sql = $sql;
-        
-        $this->_param = $params;
-
-        $stmt = $this->handler->prepare($sql);
-
-        $stmt->execute($params);
-
-        return $rowCount ? $stmt->rowCount() : $stmt->$func();
     }
 
     /**
