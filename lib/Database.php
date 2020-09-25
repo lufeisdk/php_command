@@ -12,36 +12,41 @@ class Database
 
     /**
      * 根据驱动获取数据库连接句柄
-     * @param string $driver
+     * @param string $tagName
      * @return mixed
      */
-    static public function getInstance($driver = 'mysql')
+    static public function getInstance($tagName = 'default')
     {
-        if (empty(static::$instance[$driver])) {
-            $options = static::getConfig($driver);
-            static::$instance[$driver] = new self($driver, $options);
+        if (empty(static::$instance[$tagName])) {
+            $options = static::getConfig($tagName);
+            static::$instance[$tagName] = new self($tagName, $options);
         }
-        return static::$instance[$driver];
+        return static::$instance[$tagName];
     }
 
     /**
      * 根据配置重新建立数据库连接句柄
      * 用户切换数据库使用
      * @param array $configs
-     * @param string $driver
+     * @param string $tagName
      * @return Database
      */
-    public function init($configs = [], $driver = 'mysql')
+    public function init($configs = [], $tagName = '')
     {
-        $options = static::getConfig($driver);
-        $options = array_merge($options, $configs);
-        return new self($driver, $options);
+        if ($tagName) {
+            $options = static::getConfig($tagName);
+            $options = array_merge($options, $configs);
+        } else {
+            $options = $configs;
+        }
+
+        return new self($tagName, $options);
     }
 
-    private function __construct($driver, array $options = [])
+    private function __construct($tagName, array $options = [])
     {
         try {
-            $driver = ucfirst($driver);
+            $driver = ucfirst($options['type']);
             $class = 'lib\driver\db\\' . $driver;
             if (!class_exists($class)) {
                 throw new Exception("找不到相应的数据库驱动类：" . $class);
@@ -165,16 +170,17 @@ class Database
 
     /**
      * 根据驱动类型获取配置信息
-     * @param string $driver
+     * @param string $tagName 配置的标签名，
+     * 默认取default配置，若不存在，则取数组编号为0的配置
      * @return mixed
      */
-    static private function getConfig($driver = 'mysql')
+    static private function getConfig($tagName = 'default')
     {
-        if (empty(static::$_config[$driver])) {
+        if (empty(static::$_config[$tagName])) {
             $config = require_once ROOT_PATH . '/config/database.php';
-            static::$_config[$driver] = $config[$driver];
+            static::$_config[$tagName] = $config[$tagName] ?? $config[0];
         }
-        return static::$_config[$driver];
+        return static::$_config[$tagName];
     }
 
     public function __call($method, $args)
