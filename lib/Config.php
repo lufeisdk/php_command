@@ -23,7 +23,7 @@ class Config
                 throw new Exception("找不到对应的配置文件：" . $file);
             }
 
-            $config = include $file;
+            $config = include_once $file;
             if (!isset($config[$name])) {
                 throw new Exception("找不到定义的配置项：" . $name);
             }
@@ -53,8 +53,8 @@ class Config
                 if (!is_file($file)) {
                     throw new Exception("找不到对应的配置文件：" . $file);
                 }
-                
-                return static::$aryConfig[$filename] = $config = include $file;
+
+                return static::$aryConfig[$filename] = $config = include_once $file;
             } catch (Exception $e) {
                 exit($e->errorMessage());
             }

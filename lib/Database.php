@@ -31,7 +31,7 @@ class Database
      * @param string $tagName
      * @return Database
      */
-    public function init($configs = [], $tagName = '')
+    static public function init($configs = [], $tagName = '')
     {
         if ($tagName) {
             $options = static::getConfig($tagName);
@@ -39,7 +39,6 @@ class Database
         } else {
             $options = $configs;
         }
-
         return new self($tagName, $options);
     }
 
@@ -177,7 +176,7 @@ class Database
     static private function getConfig($tagName = 'default')
     {
         if (empty(static::$_config[$tagName])) {
-            $config = require_once ROOT_PATH . '/config/database.php';
+            $config = Config::all('database');
             static::$_config[$tagName] = $config[$tagName] ?? $config[0];
         }
         return static::$_config[$tagName];

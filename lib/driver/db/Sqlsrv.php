@@ -33,7 +33,7 @@ class Sqlsrv extends Driver
         try {
             $this->handler = new \PDO($pdostr, $this->user, $this->passwd);
             # 设置编码
-            $this->handler->exec("SET names " . $this->charset);
+            //$this->handler->exec("SET names " . $this->charset);
             # 设置默认的提取模式
             $this->handler->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         } catch (Exception $e) {

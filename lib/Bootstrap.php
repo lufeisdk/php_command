@@ -19,7 +19,8 @@ class Bootstrap
                 throw new Exception("找不到对应的控制器类文件：" . $file);
             }
 
-            include $file;
+            include_once $file;
+
             $class = 'app\\' . $controller;
             if (!class_exists($class)) {
                 throw new Exception("找不到类方法：" . $class);
@@ -45,7 +46,7 @@ class Bootstrap
                 throw new Exception("找不到相应的类文件：" . $file);
             }
 
-            include $file;
+            require_once $file;
             self::$aryClassFile[$class] = $file;
         } catch (Exception $e) {
             exit($e->errorMessage());

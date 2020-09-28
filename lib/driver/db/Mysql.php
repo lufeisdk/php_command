@@ -19,7 +19,7 @@ class Mysql extends Driver
         'passwd' => 'root',
         'dbname' => '',
         'port' => 3306,
-        'charset' => 'utf8',
+        'charset' => 'utf8mb4',
     ];
 
     public function __construct(Array $config = [])
