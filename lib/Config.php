@@ -41,8 +41,8 @@ class Config
     static public function all($filename)
     {
         if (false !== strpos($filename, '.')) {
-            list($name, $file) = explode('.', $filename);
-            self::get($name, $file);
+            list($file, $name) = explode('.', $filename);
+            return self::get($name, $file);
         } else {
             if (isset(static::$aryConfig[$filename])) {
                 return static::$aryConfig[$filename];
@@ -54,7 +54,7 @@ class Config
                     throw new Exception("找不到对应的配置文件：" . $file);
                 }
 
-                return static::$aryConfig[$filename] = $config = include_once $file;
+                return static::$aryConfig[$filename] = include_once $file;
             } catch (Exception $e) {
                 exit($e->errorMessage());
             }

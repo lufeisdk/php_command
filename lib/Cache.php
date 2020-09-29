@@ -11,7 +11,7 @@ class Cache
     static public function getInstance($driver = 'file')
     {
         if (false == isset(static::$instance[$driver])) {
-            $config = require_once ROOT_PATH . '/config/cache.php';
+            $config = Config::all('cache');
             $options = $config[$driver];
             static::$instance[$driver] = new self($driver, $options);
         }

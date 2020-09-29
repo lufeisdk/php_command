@@ -3,6 +3,7 @@
 namespace app;
 
 use lib\Cache;
+use lib\Config;
 use lib\Database;
 use lib\Log;
 use lib\Controller;
@@ -134,5 +135,17 @@ class IndexController extends Controller
 //        var_dump($ret);
 //        $ret = $cache->clear();
 //        var_dump($ret);
+    }
+
+    public function test($param = [])
+    {
+        $config = Config::all('cache');
+//        pp($config);
+//        $path = array_get($config, 'file.path');
+//        pp($path);
+//        $config = Config::get('file', 'cache');
+//        pp($config);
+//        $config = Config::all('cache.file');
+//        pp($config);
     }
 }

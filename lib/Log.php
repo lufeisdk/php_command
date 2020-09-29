@@ -11,7 +11,7 @@ class Log
     static public function getInstance($driver = 'file')
     {
         if (false == isset(static::$instance[$driver])) {
-            $config = require_once ROOT_PATH . '/config/log.php';
+            $config = Config::all('log');
             $options = $config[$driver];
             static::$instance[$driver] = new self($driver, $options);
         }
