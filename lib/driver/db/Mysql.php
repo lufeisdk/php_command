@@ -33,7 +33,12 @@ class Mysql extends Driver
             $this->handler->exec("SET names " . $this->charset);
             $this->handler->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            throw new Exception('MySQL PDO数据库连接失败~');
+            if ($this->retry < 4) {
+                new self($config);
+                $this->retry++;
+            } else {
+                throw new Exception('MySQL PDO数据库连接失败~');
+            }
         }
     }
 

@@ -1,4 +1,7 @@
 <?php
+# 设置时区
+ini_set("date.timezone", "PRC");
+
 # 定义根目录
 define("ROOT_PATH", __DIR__);
 

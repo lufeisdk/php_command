@@ -6,6 +6,8 @@ abstract class Driver
 {
     static public $_OPTIONS = [];
 
+    private $retry = 0; # 重连次数
+
     public function __get($name)
     {
         return self::$_OPTIONS[$name];
