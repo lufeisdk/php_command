@@ -9,9 +9,8 @@ use MongoDB\Driver\Query as MongoDBQuery;
 use MongoDB\Driver\BulkWrite as MongoDBBulkWrite;
 use lib\exception\NotFoundException;
 
-class MongoDB
+class MongoDB extends Component
 {
-    static public $_OPTIONS = [];
     protected $handler = null; # 驱动句柄
     private $_db = null;       # 当前选择的数据库
     private $_collection;      # 当前选择的集合
@@ -39,18 +38,6 @@ class MongoDB
             static::$instance[$tagName] = new self($options);
         }
         return static::$instance[$tagName];
-    }
-
-    public function __get($name)
-    {
-        return self::$_OPTIONS[$name];
-    }
-
-    public function __set($name, $value)
-    {
-        if (isset(self::$_OPTIONS[$name])) {
-            self::$_OPTIONS[$name] = $value;
-        }
     }
 
     private function __construct(Array $config = [])
