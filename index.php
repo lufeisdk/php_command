@@ -20,5 +20,8 @@ require_once ROOT_PATH . DS . 'lib' . DS . 'Bootstrap.php';
 # 根据命名空间自动加载类
 spl_autoload_register('\lib\Bootstrap::load');
 
+# 注册错误和异常处理机制
+\lib\Error::register();
+
 # 执行命令行
 \lib\Bootstrap::run();

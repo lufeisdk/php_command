@@ -8,6 +8,21 @@ abstract class Driver
 
     private $retry = 0; # 重连次数
 
+    # 服务器断线标识字符
+    protected $breakMatchStr = [
+        'server has gone away',
+        'no connection to the server',
+        'Lost connection',
+        'is dead or not enabled',
+        'Error while sending',
+        'decryption failed or bad record mac',
+        'server closed the connection unexpectedly',
+        'SSL connection has been closed unexpectedly',
+        'Error writing data to the connection',
+        'Resource deadlock avoided',
+        'failed with errno',
+    ];
+
     public function __get($name)
     {
         return self::$_OPTIONS[$name];
@@ -100,4 +115,24 @@ abstract class Driver
      * @return mixed
      */
     abstract public function get_sql();
+
+    /**
+     * 是否断线
+     * @access protected
+     * @param  \PDOException|\Exception $e 异常对象
+     * @return bool
+     */
+    protected function isBreak($e)
+    {
+        $error = $e->getMessage();
+
+        foreach ($this->breakMatchStr as $msg) {
+            if (false !== stripos($error, $msg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }

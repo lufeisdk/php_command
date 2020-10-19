@@ -4,6 +4,8 @@ namespace lib;
 
 class Controller
 {
+    public $_params;    # 参数数组
+
     /**
      * 控制器类初始化执行方法
      */

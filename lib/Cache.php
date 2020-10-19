@@ -2,6 +2,8 @@
 
 namespace lib;
 
+use lib\exception\NotFoundException;
+
 class Cache
 {
     private $handler;
@@ -10,9 +12,8 @@ class Cache
 
     static public function getInstance($driver = 'file')
     {
-        if (false == isset(static::$instance[$driver])) {
-            $config = Config::all('cache');
-            $options = $config[$driver];
+        if (empty(static::$instance[$driver])) {
+            $options = Config::all('cache.' . $driver);
             static::$instance[$driver] = new self($driver, $options);
         }
         return static::$instance[$driver];
@@ -20,16 +21,12 @@ class Cache
 
     private function __construct($driver, array $options = [])
     {
-        try {
-            $driver = ucfirst($driver);
-            $class = 'lib\driver\cache\\' . $driver;
-            if (!class_exists($class)) {
-                throw new Exception("找不到相应的缓存驱动类：" . $class);
-            }
-            $this->handler = new $class($options);
-        } catch (Exception $e) {
-            exit($e->errorMessage());
+        $driver = ucfirst($driver);
+        $class = 'lib\driver\cache\\' . $driver;
+        if (!class_exists($class)) {
+            throw new NotFoundException("找不到相应的缓存驱动类：" . $class);
         }
+        $this->handler = new $class($options);
     }
 
     public function has($name)

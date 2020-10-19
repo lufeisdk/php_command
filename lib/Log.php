@@ -2,6 +2,8 @@
 
 namespace lib;
 
+use lib\exception\NotFoundException;
+
 class Log
 {
     private $handler;
@@ -20,16 +22,12 @@ class Log
 
     private function __construct($driver, array $options = [])
     {
-        try {
-            $driver = ucfirst($driver);
-            $class = 'lib\driver\log\\' . $driver;
-            if (!class_exists($class)) {
-                throw new Exception("找不到相应的日志驱动类：" . $class);
-            }
-            $this->handler = new $class($options);
-        } catch (Exception $e) {
-            exit($e->errorMessage());
+        $driver = ucfirst($driver);
+        $class = 'lib\driver\log\\' . $driver;
+        if (!class_exists($class)) {
+            throw new NotFoundException("找不到相应的日志驱动类：" . $class);
         }
+        $this->handler = new $class($options);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace lib\driver\cache;
 
-use lib\Exception;
+use lib\exception\NotFoundException;
 
 class Redis extends Driver
 {
@@ -41,7 +41,7 @@ class Redis extends Driver
             if (0 != $this->select) {
                 $this->handler->select($this->select);
             }
-        } elseif (class_exists('\Predis\Client')) {
+        } /*elseif (class_exists('\Predis\Client')) {
             $params = [];
             foreach ($this->options as $key => $val) {
                 if (in_array($key, ['aggregate', 'cluster', 'connections', 'exceptions', 'prefix', 'profile', 'replication', 'parameters'])) {
@@ -57,8 +57,9 @@ class Redis extends Driver
             $this->handler = new \Predis\Client($this->options, $params);
 
             $this->prefix = '';
-        } else {
-            throw new Exception('not support: redis');
+        } */
+        else {
+            throw new NotFoundException('not support: redis');
         }
     }
 

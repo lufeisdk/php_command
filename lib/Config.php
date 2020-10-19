@@ -2,6 +2,8 @@
 
 namespace lib;
 
+use lib\exception\NotFoundException;
+
 class Config
 {
     static private $aryConfig = null;
@@ -17,21 +19,17 @@ class Config
             return static::$aryConfig[$filename][$name];
         }
 
-        try {
-            $file = ROOT_PATH . DS . 'config' . DS . $filename . '.php';
-            if (!is_file($file)) {
-                throw new Exception("找不到对应的配置文件：" . $file);
-            }
-
-            $config = include_once $file;
-            if (!isset($config[$name])) {
-                throw new Exception("找不到定义的配置项：" . $name);
-            }
-            static::$aryConfig[$filename] = $config;
-            return $config[$name];
-        } catch (Exception $e) {
-            exit($e->errorMessage());
+        $file = ROOT_PATH . DS . 'config' . DS . $filename . '.php';
+        if (!is_file($file)) {
+            throw new NotFoundException("找不到对应的配置文件：" . $file);
         }
+
+        $config = include_once $file;
+        if (!isset($config[$name])) {
+            throw new NotFoundException("找不到定义的配置项：" . $name);
+        }
+        static::$aryConfig[$filename] = $config;
+        return $config[$name];
     }
 
     /**
@@ -48,16 +46,12 @@ class Config
                 return static::$aryConfig[$filename];
             }
 
-            try {
-                $file = ROOT_PATH . DS . 'config' . DS . $filename . '.php';
-                if (!is_file($file)) {
-                    throw new Exception("找不到对应的配置文件：" . $file);
-                }
-
-                return static::$aryConfig[$filename] = include_once $file;
-            } catch (Exception $e) {
-                exit($e->errorMessage());
+            $file = ROOT_PATH . DS . 'config' . DS . $filename . '.php';
+            if (!is_file($file)) {
+                throw new NotFoundException("找不到对应的配置文件：" . $file);
             }
+
+            return static::$aryConfig[$filename] = include_once $file;
         }
     }
 }

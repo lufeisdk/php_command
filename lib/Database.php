@@ -2,6 +2,8 @@
 
 namespace lib;
 
+use lib\exception\NotFoundException;
+
 class Database
 {
     private $handler;
@@ -44,16 +46,12 @@ class Database
 
     private function __construct($tagName, array $options = [])
     {
-        try {
-            $driver = ucfirst($options['type']);
-            $class = 'lib\driver\db\\' . $driver;
-            if (!class_exists($class)) {
-                throw new Exception("找不到相应的数据库驱动类：" . $class);
-            }
-            $this->handler = new $class($options);
-        } catch (Exception $e) {
-            exit($e->errorMessage());
+        $driver = ucfirst($options['type']);
+        $class = 'lib\driver\db\\' . $driver;
+        if (!class_exists($class)) {
+            throw new NotFoundException("找不到相应的数据库驱动类：" . $class);
         }
+        $this->handler = new $class($options);
     }
 
     /**

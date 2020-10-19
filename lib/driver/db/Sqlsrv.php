@@ -3,7 +3,7 @@
 namespace lib\driver\db;
 
 use lib\Exception;
-use lib\Log;
+use lib\exception\PDOException;
 
 class Sqlsrv extends Driver
 {
@@ -36,13 +36,24 @@ class Sqlsrv extends Driver
             //$this->handler->exec("SET names " . $this->charset);
             # 设置默认的提取模式
             $this->handler->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            if ($this->retry < 4) {
-                new self($config);
-                $this->retry++;
-            } else {
-                throw new Exception('SQLSrv PDO数据库连接失败~');
+        } catch (\PDOException $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry();
             }
+
+            throw new PDOException($e, self::$_OPTIONS, 'SQL Server PDO数据库连接失败~');
+        } catch (\Throwable $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry();
+            }
+
+            throw $e;
+        } catch (\Exception $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry();
+            }
+
+            throw $e;
         }
     }
 
@@ -221,12 +232,44 @@ class Sqlsrv extends Driver
             $stmt->execute();
 
             return $rowCount ? $stmt->rowCount() : $stmt->$func();
-        } catch (Exception $e) {
-            $log = Log::getInstance();
-            $content = $e->errorMessage();
-            $content .= $sql . ' | ' . json_encode($params);
-            $log->setLogFile('sql.log')->write($content);
-            exit();
+        } catch (\PDOException $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry()->getPreResult($func, $sql, $params, $rowCount);
+            }
+
+            throw new PDOException($e, self::$_OPTIONS, $this->get_sql());
+        } catch (\Throwable $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry()->getPreResult($func, $sql, $params, $rowCount);
+            }
+
+            throw $e;
+        } catch (\Exception $e) {
+            if ($this->isBreak($e)) {
+                return $this->retry()->getPreResult($func, $sql, $params, $rowCount);
+            }
+
+            throw $e;
         }
+    }
+
+    /**
+     * 关闭数据库（或者重新连接）
+     * @access public
+     * @return $this
+     */
+    public function retry()
+    {
+        $this->handler = null;
+
+        return new self(self::$_OPTIONS);
+    }
+
+    /**
+     * 关闭数据库连接
+     */
+    public function __destruct()
+    {
+        $this->handler = null;
     }
 }
