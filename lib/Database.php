@@ -8,8 +8,6 @@ class Database
 {
     private $handler;
 
-    static private $instance;
-
     static private $_config = [];
 
     /**
@@ -19,11 +17,12 @@ class Database
      */
     static public function getInstance($tagName = 'default')
     {
-        if (empty(static::$instance[$tagName])) {
+        static $instance;   # 单例实例句柄
+        if (empty($instance[$tagName])) {
             $options = static::getConfig($tagName);
-            static::$instance[$tagName] = new self($tagName, $options);
+            $instance[$tagName] = new self($tagName, $options);
         }
-        return static::$instance[$tagName];
+        return $instance[$tagName];
     }
 
     /**

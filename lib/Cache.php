@@ -8,15 +8,14 @@ class Cache
 {
     private $handler;
 
-    static private $instance;
-
     static public function getInstance($driver = 'file')
     {
-        if (empty(static::$instance[$driver])) {
+        static $instance; # 单例实例句柄
+        if (empty($instance[$driver])) {
             $options = Config::all('cache.' . $driver);
-            static::$instance[$driver] = new self($driver, $options);
+            $instance[$driver] = new self($driver, $options);
         }
-        return static::$instance[$driver];
+        return $instance[$driver];
     }
 
     private function __construct($driver, array $options = [])

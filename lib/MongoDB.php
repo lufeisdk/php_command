@@ -14,7 +14,6 @@ class MongoDB extends Component
     protected $handler = null; # 驱动句柄
     private $_db = null;       # 当前选择的数据库
     private $_collection;      # 当前选择的集合
-    static private $instance;  # 单例实例句柄
 
     // 默认配置
     static private $_CONFIG = [
@@ -33,11 +32,12 @@ class MongoDB extends Component
      */
     static public function getInstance($tagName = 'default')
     {
-        if (empty(static::$instance[$tagName])) {
+        static $instance;  # 单例实例句柄
+        if (empty($instance[$tagName])) {
             $options = Config::all('mongodb');
-            static::$instance[$tagName] = new self($options);
+            $instance[$tagName] = new self($options);
         }
-        return static::$instance[$tagName];
+        return $instance[$tagName];
     }
 
     private function __construct(Array $config = [])
