@@ -1,4 +1,6 @@
 <?php
+if (PHP_SAPI != 'cli') die('只支持命令行执行~');
+
 # 设置时区
 ini_set("date.timezone", "PRC");
 
